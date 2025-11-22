@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { getHistory, HistoryItem, HistoryResponse } from '@/api.clients'
+import { getHistory, type   HistoryItem, type HistoryResponse } from '@/api.clients'
 import { Button } from '@/components/ui/button'
 import { CodeDisplay } from './CodeDisplay'
 
