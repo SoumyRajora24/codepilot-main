@@ -1,0 +1,45 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+// Language table to store programming language information
+// This allows for normalization and can store additional metadata about languages
+model Language {
+  id          String       @id @default(uuid())
+  name        String       @unique // e.g., "python", "javascript", "typescript"
+  displayName String?      // e.g., "Python", "JavaScript", "TypeScript"
+  version     String?      // Optional version info
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  
+  // One-to-many relationship: one language can have many generations
+  generations Generation[]
+  
+  @@map("languages")
+}
+
+// Generation table to store each code generation request and response
+model Generation {
+  id        String   @id @default(uuid())
+  prompt    String   // The user's prompt/request
+  code      String   // The generated code
+  language  String   // Denormalized language name for quick access
+  languageId String  // Foreign key to Language table
+  timestamp DateTime @default(now()) // When the generation was created
+  
+  // Many-to-one relationship: many generations belong to one language
+  languageRelation Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  
+  @@index([languageId])
+  @@index([timestamp])
+  @@map("generations")
+}
